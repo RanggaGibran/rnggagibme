@@ -69,6 +69,29 @@ export const profile = {
     "Kubernetes",
     "CI/CD",
   ],
+  portfolio: [
+    {
+      title: "Website Absensi Sekolah",
+      category: "Web Application",
+      description: "Sistem absensi digital untuk sekolah dengan fitur pengenalan wajah, laporan realtime, dan dashboard admin yang komprehensif.",
+      image: "/projects/absensi-sekolah.png",
+      tags: ["React", "Node.js", "PostgreSQL", "Face Recognition"],
+    },
+    {
+      title: "Vexia Studio",
+      category: "Business Website",
+      description: "Website profesional untuk Vexia Studio - penyedia jasa pembuatan website berkualitas tinggi oleh Rangga Gibran. Menampilkan portfolio, layanan, dan sistem pemesanan terintegrasi.",
+      image: "/projects/vexia-studio.png",
+      tags: ["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion"],
+    },
+    {
+      title: "Aplikasi Admin (Mahasiswa)",
+      category: "Dashboard System",
+      description: "Dashboard admin untuk pengelolaan data mahasiswa dengan fitur CRUD lengkap, export data, dan visualisasi statistik.",
+      image: "/projects/admin-mahasiswa.png",
+      tags: ["Next.js", "TypeScript", "Prisma", "Chart.js"],
+    },
+  ],
   contact: {
     email: "admin@rnggagib.me",
     status: "Open to remote-first product teams and outcome-driven engagements.",

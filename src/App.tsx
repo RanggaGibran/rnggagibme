@@ -1,20 +1,37 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { profile } from "./data/profile";
 import { useGithubRepos } from "./hooks/useGithubRepos";
 import { CustomCursor } from "./components/CustomCursor";
 import { FloatingShapes } from "./components/FloatingShapes";
 import "./styles/global.css";
 
+type PortfolioItem = typeof profile.portfolio[0];
+
 const navLinks = [
   { label: "About", href: "#about" },
   { label: "Work", href: "#work" },
   { label: "Skills", href: "#skills" },
+  { label: "Karya", href: "#karya" },
   { label: "Projects", href: "#projects" },
   { label: "Contact", href: "#contact" },
 ];
 
 function App() {
   const { repos, status, error, refresh } = useGithubRepos(profile.github.username);
+  const [selectedProject, setSelectedProject] = useState<PortfolioItem | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = (project: PortfolioItem) => {
+    setSelectedProject(project);
+    setIsModalOpen(true);
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    document.body.style.overflow = 'unset';
+    setTimeout(() => setSelectedProject(null), 300);
+  };
 
   useEffect(() => {
     const observerOptions = {
@@ -184,6 +201,116 @@ function App() {
             </div>
           </div>
         </section>
+
+        {/* Karya Section */}
+        <section id="karya" className="karya-section">
+          <div className="karya-section__header reveal-on-scroll">
+            <span className="karya-section__label">Portfolio</span>
+            <h2 className="section-title">Karya Saya</h2>
+            <p className="karya-section__subtitle">Koleksi proyek yang telah saya kerjakan dengan dedikasi penuh</p>
+          </div>
+          <div className="karya-grid">
+            {profile.portfolio.map((item, index) => (
+              <div key={item.title} className={`karya-card reveal-on-scroll`} style={{ animationDelay: `${index * 0.15}s` }}>
+                <div className="karya-card__image-wrapper">
+                  <div className="karya-card__image" style={{ backgroundImage: `url(${item.image})` }}>
+                    <div className="karya-card__overlay">
+                      <button className="karya-card__view-btn" onClick={() => openModal(item)}>
+                        <span>View Details</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="karya-card__category-badge">{item.category}</div>
+                </div>
+                <div className="karya-card__content">
+                  <h3 className="karya-card__title">{item.title}</h3>
+                  <p className="karya-card__description">{item.description}</p>
+                  <div className="karya-card__tags">
+                    {item.tags.map((tag) => (
+                      <span key={tag} className="karya-card__tag">{tag}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Portfolio Modal */}
+        <div className={`modal-overlay ${isModalOpen ? 'modal-overlay--active' : ''}`} onClick={closeModal}>
+          <div className={`modal ${isModalOpen ? 'modal--active' : ''}`} onClick={(e) => e.stopPropagation()}>
+            {selectedProject && (
+              <>
+                <button className="modal__close" onClick={closeModal}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M18 6L6 18M6 6l12 12"/>
+                  </svg>
+                </button>
+                
+                <div className="modal__image-container">
+                  <div className="modal__image" style={{ backgroundImage: `url(${selectedProject.image})` }}>
+                    <div className="modal__image-overlay"></div>
+                  </div>
+                  <div className="modal__category">{selectedProject.category}</div>
+                </div>
+                
+                <div className="modal__content">
+                  <div className="modal__header">
+                    <h2 className="modal__title">{selectedProject.title}</h2>
+                    <div className="modal__status">
+                      <span className="modal__status-dot"></span>
+                      <span>Project Completed</span>
+                    </div>
+                  </div>
+                  
+                  <p className="modal__description">{selectedProject.description}</p>
+                  
+                  <div className="modal__section">
+                    <h4 className="modal__section-title">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                      </svg>
+                      Tech Stack
+                    </h4>
+                    <div className="modal__tags">
+                      {selectedProject.tags.map((tag) => (
+                        <span key={tag} className="modal__tag">{tag}</span>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="modal__section">
+                    <h4 className="modal__section-title">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 6v6l4 2"/>
+                      </svg>
+                      Project Highlights
+                    </h4>
+                    <ul className="modal__highlights">
+                      <li>Fully responsive design for all devices</li>
+                      <li>Modern UI/UX with smooth animations</li>
+                      <li>Optimized performance & fast loading</li>
+                      <li>Clean and maintainable codebase</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="modal__actions">
+                    <button className="modal__btn modal__btn--primary" onClick={closeModal}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M5 13l4 4L19 7"/>
+                      </svg>
+                      Got It
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
 
         {/* Projects/Repos */}
         <section id="projects" className="projects-section reveal-on-scroll">
